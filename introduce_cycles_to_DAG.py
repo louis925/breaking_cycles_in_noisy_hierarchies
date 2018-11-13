@@ -27,7 +27,7 @@ def add_cycle_edges_by_path(g,number_of_edges,path_length = 5):
 def add_extra_edges(g,number_of_edges):
 	number = 0
 	num_nodes = g.number_of_nodes()
-	nodes = g.nodes()
+	nodes = list(g.nodes())
 	extra_edges = set()
 	while len(extra_edges) < number_of_edges:
 		u,v = np.random.randint(0,num_nodes,2)
@@ -76,13 +76,14 @@ def introduce_cycles_2_DAG(graph_file,num_extra_edges,path_length):
 
 	extra_edges_file = graph_file[:len(graph_file)-6] + "_extra_" + str(num_extra_edges) + "_path_len_" + str(path_length) + ".edges"
 	graph_with_extra_edges_file = graph_file[:len(graph_file)-6] + "_graph_w_extra_" + str(num_extra_edges) + "_path_len_" + str(path_length) + ".edges"
+	#print('type', type(extra_edges))
 
 	print("extra edges saved in: %s" % extra_edges_file)
 	print("graph with extra edges saved in: %s" % graph_with_extra_edges_file)
 	from file_io import write_pairs_to_file
 
 	write_pairs_to_file(extra_edges,extra_edges_file)
-	write_pairs_to_file(extra_edges + g.edges(),graph_with_extra_edges_file)	
+	write_pairs_to_file(extra_edges + list(g.edges()), graph_with_extra_edges_file)	
 
 	return (extra_edges_file,graph_with_extra_edges_file)
 if __name__ == "__main__":

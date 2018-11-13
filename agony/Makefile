@@ -3,7 +3,7 @@ OBJS = $(SRCS:.cpp=.o)
 
 
 CC = g++
-LDFLAGS= -lm -O3 -lgsl -lblas -L/opt/local/lib
+LDFLAGS= -lm -O3 -lgsl -lblas #-L/opt/local/lib
 CFLAGS= -g -O3 -Wall -Wextra -I/opt/local/include/ #-Werror
 
 all : agony 

@@ -9,7 +9,7 @@ sys.setrecursionlimit(5500000)
 def dfs_visit_recursively(g,node,nodes_color,edges_to_be_removed):
 
 	nodes_color[node] = 1
-	nodes_order = list(g.successors_iter(node))
+	nodes_order = list(g.successors(node))
 	nodes_order = np.random.permutation(nodes_order)
 	for child in nodes_order:
 		if nodes_color[child] == 0:
@@ -29,10 +29,10 @@ def dfs_remove_back_edges(graph_file,nodetype = int):
 	g = nx.read_edgelist(graph_file,create_using = nx.DiGraph(),nodetype = nodetype)
 	nodes_color = {}
 	edges_to_be_removed = []
-	for node in g.nodes_iter():
+	for node in g.nodes():
 		nodes_color[node] = 0
 
-	nodes_order = list(g.nodes_iter())
+	nodes_order = list(g.nodes())
 	nodes_order = np.random.permutation(nodes_order)
 	num_dfs = 0
 	for node in nodes_order:

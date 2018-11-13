@@ -47,7 +47,7 @@ def _plotFMeasures(fstepsize=.1,  stepsize=0.0005, start = 0.0, end = 1.0):
             y_left = -0.02
             pl.annotate(r"$f=%.1f$" % f, xy=(xs[datapoint_x_loc], ys[datapoint_y_loc]), xytext=(xs[datapoint_x_loc] - x_left, ys[datapoint_y_loc] - y_left), size="small", color="gray")
         except Exception as e:
-            print e 
+            print(e)
 
 #colors = "gcmbbbrrryk"
 #colors = "yyybbbrrrckgm"  # 7 is a prime, so we'll loop over all combinations of colors and markers, when zipping their cycles
@@ -89,7 +89,7 @@ def plotPrecisionRecallDiagram(title="title", points=None, labels=None, loc="bes
             label = None
             if labels:
                 label = labels[i]
-            print i, x, y, label
+            print(i, x, y, label)
             scp = ax.scatter(x, y, label=label, s=50, linewidths=0.75,
                              facecolor=getColor(), alpha=0.75, marker=getMarker())
             scps.append(scp)
