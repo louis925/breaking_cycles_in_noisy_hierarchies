@@ -1,11 +1,16 @@
 #### Install Packages
 
+##### Install Packages (macOS)
+```
+brew install gsl
+```
+
 ##### Install Packages (ubuntu)
 
 ```
-sudo apt-get install libgsl2 libgsl2:i386
-sudo apt-get install libblas3gf libblas-doc libblas-dev
-sudo apt-get install libgsl0-dev
+#apt-get install libgsl2 libgsl2:i386
+apt-get install libblas-dev liblapack-dev
+apt-get install libgsl0-dev
 ```
 
 ##### Install Packages (OSC)
