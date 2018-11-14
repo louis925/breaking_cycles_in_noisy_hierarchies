@@ -2,19 +2,19 @@
 #include <assert.h>
 
 void
-graph::reset(uint32_t n, uint32_t m) 
+graph::reset(uint64_t n, uint64_t m)
 {
 	m_nodes.resize(n);
 	m_edges.resize(m);
 
-	for (uint32_t i = 0; i < n; i++) {
+	for (uint64_t i = 0; i < n; i++) {
 		TAILQ_INIT(&m_nodes[i].out);
 		TAILQ_INIT(&m_nodes[i].in);
 		m_nodes[i].id = i;
 		m_nodes[i].ind = m_nodes[i].outd = 0;
 	}
 
-	for (uint32_t i = 0; i < m_edges.size(); i++) {
+	for (uint64_t i = 0; i < m_edges.size(); i++) {
 		m_edges[i].id = i;
 		m_edges[i].bound = false;
 	}
@@ -28,19 +28,19 @@ graph::copy(const graph & g)
 {
 	reset(g.m_nodes.size(), g.m_edges.size());
 
-	for (uint32_t i = 0; i < m_edges.size(); i++) {
+	for (uint64_t i = 0; i < m_edges.size(); i++) {
 		if (g.m_edges[i].bound)
 			bind(i, g.m_edges[i].parent->id, g.m_edges[i].child->id);
 	}
 
 }
 
-uint32_t
+uint64_t
 agony::cost()
 {
-	uint32_t t = 0;
+	uint64_t t = 0;
 
-	for (uint32_t i = 0; i < m_edges.size(); i++) {
+	for (uint64_t i = 0; i < m_edges.size(); i++) {
 		node *n = from(i);
 		node *m = to(i);
 		if (m->rank <= n->rank) t += n->rank - m->rank + 1;
@@ -60,7 +60,7 @@ agony::cycledfs()
 	nodehead active;
 	TAILQ_INIT(&active);
 
-	for (uint32_t i = 0; i < size(); i++) TAILQ_INSERT_TAIL(&active, &m_nodes[i], entries);
+	for (uint64_t i = 0; i < size(); i++) TAILQ_INSERT_TAIL(&active, &m_nodes[i], entries);
 
 	while (!TAILQ_EMPTY(&active)) {
 		node *seed = TAILQ_FIRST(&active);
@@ -113,7 +113,7 @@ agony::initagony()
 	m_dag.copy(m_graph);
 	m_euler.copy(m_graph);
 
-	for (uint32_t i = 0; i < m_edges.size(); i++) {
+	for (uint64_t i = 0; i < m_edges.size(); i++) {
 		if (getedge(i)->eulerian) {
 			m_dag.unbind(m_dag.getedge(i));
 			m_dual++;
@@ -131,7 +131,7 @@ agony::initrank()
 {
 	nodelist sources;
 
-	for (uint32_t i = 0; i < size(); i++) {
+	for (uint64_t i = 0; i < size(); i++) {
 		node *n = getnode(i);
 		n->count = m_dag.getnode(i)->ind;
 		if (n->count == 0) {
@@ -155,21 +155,21 @@ agony::initrank()
 	}
 
 	m_slacks.resize(size());
-	for (uint32_t i = 0; i < size(); i++) {
+	for (uint64_t i = 0; i < size(); i++) {
 		TAILQ_INIT(&m_slacks[i]);
 	}
 
 	m_curslack = -1;
-	for (uint32_t i = 0; i < m_edges.size(); i++) {
+	for (uint64_t i = 0; i < m_edges.size(); i++) {
 		if (getedge(i)->eulerian) addslack(i);
-		m_curslack = std::max(int32_t(slack(i)), m_curslack);
+		m_curslack = std::max(int64_t(slack(i)), m_curslack);
 	}
 }
 
 void
 agony::minagony()
 {
-	for (uint32_t i = 0; i < size(); i++) {
+	for (uint64_t i = 0; i < size(); i++) {
 		graph::node *n = m_dag.getnode(i);
 		graph::edge *e;
 
@@ -185,13 +185,13 @@ agony::minagony()
 		edge *e = TAILQ_FIRST(&m_slacks[m_curslack]);
 
 		relief(e->id);	
-		printf("%d %d\n", primal(), dual());
+		printf("%llu %llu\n", primal(), dual());
 	}
 }
 
 
 void
-agony::relief(uint32_t edge)
+agony::relief(uint64_t edge)
 {
 	graph::edge *e = m_euler.getedge(edge);
 	node *p = getnode(e->parent->id);
@@ -203,22 +203,22 @@ agony::relief(uint32_t edge)
 
 	// Add and init queue
 	nodequeue q(p->diff);
-	for (uint32_t i = 0; i < q.size(); i++)
+	for (uint64_t i = 0; i < q.size(); i++)
 		TAILQ_INIT(&q[i]);
 	TAILQ_INSERT_TAIL(&q[p->diff - 1], p, entries);
-	int32_t curstack = p->diff - 1;
+	int64_t curstack = p->diff - 1;
 
 	nodelist nl;
 	nodelist visited;
 	nl.push_back(p);
 
-	uint32_t bound = 0;
+	uint64_t bound = 0;
 
 	while (true) {
 
 		while (curstack >= 0 && TAILQ_EMPTY(&q[curstack])) curstack--;
 
-		if (curstack < int32_t(bound)) {
+		if (curstack < int64_t(bound)) {
 			break;
 		}
 
@@ -239,7 +239,7 @@ agony::relief(uint32_t edge)
 			node *v = getnode(e->child->id);
 			assert(u->rank < v->rank);
 			if (v->newrank <= u->newrank) {
-				uint32_t t = u->newrank + 1 - v->newrank;
+				uint64_t t = u->newrank + 1 - v->newrank;
 				assert(t - 1 <= curstack);
 				if (v == s) bound = std::max(bound, t);
 				if (t > v->diff) {
@@ -258,7 +258,7 @@ agony::relief(uint32_t edge)
 		TAILQ_FOREACH(e, &n->in, to) {
 			node *v = getnode(e->parent->id);
 			if (newslack(v, u) > slack(v, u)) {
-				uint32_t t = newslack(v, u) - slack(v, u);
+				uint64_t t = newslack(v, u) - slack(v, u);
 				assert(t - 1 <= curstack);
 				if (v == s) bound = std::max(bound, t);
 				if (t > v->diff) {
@@ -317,7 +317,7 @@ agony::resetrelief(nodelist & nl)
 }
 
 void
-agony::shiftrank(nodelist & nl, uint32_t shift)
+agony::shiftrank(nodelist & nl, uint64_t shift)
 {
 	for (nodelist::iterator it = nl.begin(); it != nl.end(); ++it) {
 		node *n = *it;
@@ -326,7 +326,7 @@ agony::shiftrank(nodelist & nl, uint32_t shift)
 }
 
 void
-agony::extractcycle(uint32_t eid)
+agony::extractcycle(uint64_t eid)
 {
 	graph::edge *e = m_euler.getedge(eid);
 	node *p = getnode(e->parent->id);
@@ -366,17 +366,17 @@ agony::extractcycle(uint32_t eid)
 }
 
 void
-agony::deleteslack(uint32_t eid)
+agony::deleteslack(uint64_t eid)
 {
-	uint32_t t = getedge(eid)->slack;
+	uint64_t t = getedge(eid)->slack;
 	if (t > 0) TAILQ_REMOVE(&m_slacks[t - 1], getedge(eid), entries);
 	m_primal -= t;
 }
 
 void
-agony::addslack(uint32_t eid)
+agony::addslack(uint64_t eid)
 {
-	uint32_t t = slack(eid);
+	uint64_t t = slack(eid);
 	edge *e = getedge(eid);
 	e->slack = t;
 	if (t > 0) TAILQ_INSERT_TAIL(&m_slacks[t - 1], getedge(eid), entries);

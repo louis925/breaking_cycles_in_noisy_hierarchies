@@ -24,9 +24,9 @@ main(int argc, char **argv)
 	ag.cycledfs();
 	ag.initagony();
 	ag.initrank();
-	printf("%d %d\n", ag.primal(), ag.dual());
+	printf("%llu %llu\n", ag.primal(), ag.dual());
 	ag.minagony();
-	printf("%d\n", ag.dual());
+	printf("%llu\n", ag.dual());
 
 	if (argc > 2) {
 		FILE *out = fopen(argv[2], "w");

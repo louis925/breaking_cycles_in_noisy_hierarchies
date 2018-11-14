@@ -12,10 +12,10 @@ class graph {
 	public:
 		graph() {}
 
-		graph(uint32_t n, uint32_t m) {reset(n, m);}
+		graph(uint64_t n, uint64_t m) {reset(n, m);}
 		graph(const graph & g);
 
-		void reset(uint32_t n, uint32_t m);
+		void reset(uint64_t n, uint64_t m);
 		void copy(const graph & g);
 
 		struct edge;
@@ -23,19 +23,19 @@ class graph {
 		TAILQ_HEAD(edgelist, edge);
 
 		struct node {
-			uint32_t id;
+			uint64_t id;
 			edgelist out, in;
-			uint32_t ind, outd;
+			uint64_t ind, outd;
 		};
 
 		struct edge {
 			node *parent, *child;
-			uint32_t id;
+			uint64_t id;
 			bool bound;
 			TAILQ_ENTRY(edge) from, to;
 		};
 
-		void bind(uint32_t k, uint32_t n, uint32_t m) {bind(getedge(k), getnode(n), getnode(m));}
+		void bind(uint64_t k, uint64_t n, uint64_t m) {bind(getedge(k), getnode(n), getnode(m));}
 
 		void
 		bind(edge *e, node *n, node *m)
@@ -66,8 +66,8 @@ class graph {
 			while (!TAILQ_EMPTY(&n->in)) unbind(TAILQ_FIRST(&n->in));
 		}
 
-		node * getnode(uint32_t i) {return &m_nodes[i];} 
-		edge * getedge(uint32_t i) {return &m_edges[i];} 
+		node * getnode(uint64_t i) {return &m_nodes[i];} 
+		edge * getedge(uint64_t i) {return &m_edges[i];} 
 
 	protected:
 		const graph & operator = (const graph & ) {return *this;}
@@ -83,17 +83,17 @@ class agony
 	public:
 
 		struct node {
-			uint32_t id;
-			uint32_t label;
+			uint64_t id;
+			uint64_t label;
 
-			uint32_t rank;
-			uint32_t newrank;
-			uint32_t diff;
+			uint64_t rank;
+			uint64_t newrank;
+			uint64_t diff;
 
 			node *parent;
-			uint32_t paredge;
+			uint64_t paredge;
 
-			uint32_t count;
+			uint64_t count;
 
 			TAILQ_ENTRY(node) entries, active;
 		};
@@ -102,17 +102,17 @@ class agony
 
 		struct edge {
 			bool eulerian;
-			uint32_t id;
-			uint32_t slack;
+			uint64_t id;
+			uint64_t slack;
 
 			TAILQ_ENTRY(edge) entries;
 		};
 
 		TAILQ_HEAD(edgehead, edge);
 
-		uint32_t size() const {return m_nodes.size();}
-		node * getnode(uint32_t i) {return &m_nodes[i];} 
-		edge * getedge(uint32_t i) {return &m_edges[i];} 
+		uint64_t size() const {return m_nodes.size();}
+		node * getnode(uint64_t i) {return &m_nodes[i];} 
+		edge * getedge(uint64_t i) {return &m_edges[i];} 
 
 		void cycledfs();
 
@@ -122,24 +122,24 @@ class agony
 		void read(FILE *f);
 		void writeagony(FILE *f);
 
-		void relief(uint32_t edge);
+		void relief(uint64_t edge);
 
 		void minagony();
 
-		uint32_t primal() const {return m_primal;}
-		uint32_t dual() const {return m_dual;}
+		uint64_t primal() const {return m_primal;}
+		uint64_t dual() const {return m_dual;}
 
-		uint32_t cost();
+		uint64_t cost();
 
 
 	protected:
-		uint32_t slack(node *v, node *u) const {return u->rank > v->rank + 1 ? u->rank - v->rank - 1 : 0;}
-		uint32_t newslack(node *v, node *u) const {return u->newrank > v->newrank + 1 ? u->newrank - v->newrank - 1 : 0;}
+		uint64_t slack(node *v, node *u) const {return u->rank > v->rank + 1 ? u->rank - v->rank - 1 : 0;}
+		uint64_t newslack(node *v, node *u) const {return u->newrank > v->newrank + 1 ? u->newrank - v->newrank - 1 : 0;}
 
-		uint32_t slack(uint32_t eid) {return slack(from(eid), to(eid));}
+		uint64_t slack(uint64_t eid) {return slack(from(eid), to(eid));}
 
-		void deleteslack(uint32_t eid);
-		void addslack(uint32_t eid);
+		void deleteslack(uint64_t eid);
+		void addslack(uint64_t eid);
 		
 		typedef std::vector<node> nodevector;
 		typedef std::vector<edge> edgevector;
@@ -150,11 +150,11 @@ class agony
 
 		void updaterelief(nodelist & nl);
 		void resetrelief(nodelist & nl);
-		void shiftrank(nodelist & nl, uint32_t s);
-		void extractcycle(uint32_t edge);
+		void shiftrank(nodelist & nl, uint64_t s);
+		void extractcycle(uint64_t edge);
 
-		node *from(uint32_t eid) {return getnode(m_graph.getedge(eid)->parent->id);}
-		node *to(uint32_t eid) {return getnode(m_graph.getedge(eid)->child->id);}
+		node *from(uint64_t eid) {return getnode(m_graph.getedge(eid)->parent->id);}
+		node *to(uint64_t eid) {return getnode(m_graph.getedge(eid)->child->id);}
 
 
 		nodevector m_nodes;
@@ -164,11 +164,11 @@ class agony
 		graph m_dag, m_euler;
 
 		edgequeue m_slacks;
-		int32_t m_curslack;
+		int64_t m_curslack;
 
-		uint32_t m_dual;
-		uint32_t m_primal;
-		//uint32_t m_minid;
+		uint64_t m_dual;
+		uint64_t m_primal;
+		//uint64_t m_minid;
 };
 
 #endif

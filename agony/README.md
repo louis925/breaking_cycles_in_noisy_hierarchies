@@ -13,7 +13,7 @@ apt-get install libblas-dev liblapack-dev
 apt-get install libgsl0-dev
 ```
 
-##### Install Packages (OSC)
+##### Install Packages (Ohio Supercomputer Center)
 
 note:
 
